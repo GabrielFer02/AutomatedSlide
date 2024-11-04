@@ -8,3 +8,35 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+body {
+  font-family: sans-serif;
+  margin: 20px;
+}
+
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+#slide-elements {
+  display: grid;
+}
+
+#slide-elements > * {
+  grid-column: 1;
+  grid-row: 1;
+  opacity: 0;
+  visibility: 0;
+}
+
+#slide-elements > .active {
+  opacity: 1;
+  visibility: visible;
+}
