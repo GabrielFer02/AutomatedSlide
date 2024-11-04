@@ -3,11 +3,47 @@ export default class Slide {
     elements;
     controls;
     timer;
+    index;
+    slide;
     constructor(container, elements, controls, timer) {
         this.container = container;
         this.elements = elements;
         this.controls = controls;
         this.timer = timer;
+        this.index = 0;
+        this.slide = this.elements[this.index];
+        this.init();
+    }
+    hide(element) {
+        element.classList.remove("active");
+    }
+    show(index) {
+        this.index = index;
+        this.slide = this.elements[this.index];
+        this.elements.forEach((elemento) => this.hide(elemento));
+        this.slide.classList.add("active");
+    }
+    prev() {
+        const prev = this.index > 0 ? this.index - 1 : this.elements.length - 1;
+        this.show(prev);
+    }
+    next() {
+        const next = this.index + 1 < this.elements.length ? this.index + 1 : 0;
+        this.show(next);
+    }
+    addControls() {
+        const prevButton = document.createElement("button");
+        const nextButton = document.createElement("button");
+        prevButton.innerText = "Slide Anterior";
+        nextButton.innerText = "Próximo Slide";
+        this.controls.appendChild(prevButton);
+        this.controls.appendChild(nextButton);
+        prevButton.addEventListener("pointerup", () => this.prev());
+        nextButton.addEventListener("pointerup", () => this.next());
+    }
+    init() {
+        this.addControls();
+        this.show(this.index);
     }
 }
 //# sourceMappingURL=slide.js.map
