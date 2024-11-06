@@ -7,14 +7,18 @@ export default class Slide {
     index;
     slide;
     timeout;
+    paused;
+    pausedTimeout;
     constructor(container, elements, controls, timer) {
         this.container = container;
         this.elements = elements;
         this.controls = controls;
         this.timer = timer;
         this.timeout = null;
+        this.pausedTimeout = null;
         this.index = 0;
         this.slide = this.elements[this.index];
+        this.paused = false;
         this.init();
     }
     hide(element) {
@@ -30,15 +34,31 @@ export default class Slide {
     auto(timer) {
         this.timeout?.clear();
         this.timeout = new Timeout(() => this.next(), timer);
-        console.log(this.timeout.id);
     }
     prev() {
-        const prev = this.index > 0 ? this.index - 1 : this.elements.length - 1;
-        this.show(prev);
+        if (!this.paused) {
+            const prev = this.index > 0 ? this.index - 1 : this.elements.length - 1;
+            this.show(prev);
+        }
     }
     next() {
-        const next = this.index + 1 < this.elements.length ? this.index + 1 : 0;
-        this.show(next);
+        if (!this.paused) {
+            const next = this.index + 1 < this.elements.length ? this.index + 1 : 0;
+            this.show(next);
+        }
+    }
+    pause() {
+        this.pausedTimeout = new Timeout(() => {
+            this.timeout?.pause();
+            this.paused = true;
+        }, 300);
+    }
+    continue() {
+        this.pausedTimeout?.clear();
+        if (this.paused) {
+            this.paused = false;
+            this.timeout?.continue();
+        }
     }
     addControls() {
         const prevButton = document.createElement("button");
@@ -47,6 +67,8 @@ export default class Slide {
         nextButton.innerText = "Próximo Slide";
         this.controls.appendChild(prevButton);
         this.controls.appendChild(nextButton);
+        this.controls.addEventListener("pointerdown", () => this.pause());
+        this.controls.addEventListener("pointerup", () => this.continue());
         prevButton.addEventListener("pointerup", () => this.prev());
         nextButton.addEventListener("pointerup", () => this.next());
     }
